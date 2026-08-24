@@ -1,0 +1,11 @@
+# 启动
+cd D:\python\agent\test-agent\resume-agent\backend
+& "C:\Users\MECHREVO\AppData\Local\Programs\Python\Python314\python.exe" -m uvicorn main:app --reload --port 8000
+
+cd D:\python\agent\test-agent\resume-agent\frontend
+& "C:\Program Files\nodejs\npm.cmd" run dev
+
+
+# 停止
+taskkill /IM node.exe /F
+taskkill /IM python.exe /F
