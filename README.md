@@ -1,174 +1,167 @@
-# 简历智能打分 Agent
+# 简历智能打分 Agent v2.0
 
 基于 **FastAPI + React + SQLite** 的端到端简历打分应用。集成 OpenAI LLM 与 Tavily 联网搜索，自动对候选人与岗位的匹配度进行多维度评分并给出可操作的学习建议。
 
 ## ✨ 功能特性
 
-- 📄 **简历管理**：上传 PDF / DOCX / TXT，自动解析文本并存库
+- 📄 **简历管理**：上传 PDF / DOCX / TXT 等多种格式，自动解析
 - 🌐 **联网搜索**：调用 Tavily 自动获取公司与岗位背景
 - 🤖 **多维打分**：技能 / 经验 / 教育 / 项目 四维评分 + 总分
-- 💡 **改进建议**：优势、不足、简历改写、知识盲点、5+ 条学习资源
+- 💡 **改进建议**：优势、不足、简历改写、学习资源
+- 🎤 **模拟面试**：AI 生成面试问题，实时评估回答并打分
+- ⚙️ **在线配置**：支持在线修改 API Key、切换大模型厂商
 - 📚 **历史记录**：所有打分记录可回溯查看
-- 🎨 **现代 UI**：React + TailwindCSS，左右分栏
 
 ## 🧱 技术栈
 
 | 层 | 选型 |
 |---|---|
-| 后端 | Python 3.11 / FastAPI / SQLAlchemy 2 / SQLite |
-| 简历解析 | PyPDF2 / python-docx / 纯文本 |
+| 后端 | Python 3.14 / FastAPI / SQLAlchemy / SQLite |
+| 简历解析 | LiteParse > markitdown > PyPDF2 > pdfplumber > 视觉 LLM |
 | 外部服务 | OpenAI API / Tavily Search API |
-| 前端 | React 18 / Vite 5 / TailwindCSS 3 / Axios |
+| 前端 | React 18 / Vite 5 / TailwindCSS 3 |
 
-## 📁 目录结构
+## 🚀 快速开始
 
-```
+### 1. 配置环境变量
+
+复制 .env.example 为 .env，填入 API Key。
+
+### 2. 启动服务
+
+`powershell
+# 终端 1：启动后端
+cd resume-agent/backend
+python -m uvicorn main:app --host 127.0.0.1 --port 8000
+
+# 终端 2：启动前端
+cd resume-agent/frontend
+npm install  # 首次运行
+npm run dev
+`
+
+### 3. 访问应用
+
+打开浏览器访问 http://localhost:5173
+
+## 📡 API 接口
+
+### 简历管理
+| Method | Path | 说明 |
+|---|---|---|
+| POST | /api/resumes/upload | 上传简历 |
+| GET | /api/resumes | 简历列表 |
+| DELETE | /api/resumes/{id} | 删除简历 |
+
+### 打分功能
+| Method | Path | 说明 |
+|---|---|---|
+| POST | /api/score | 打分 |
+| GET | /api/score/history | 历史记录 |
+| DELETE | /api/score/history/{id} | 删除记录 |
+
+### 模拟面试
+| Method | Path | 说明 |
+|---|---|---|
+| POST | /api/interview/questions | 生成面试问题 |
+| POST | /api/interview/evaluate | 评估回答 |
+
+### 配置管理
+| Method | Path | 说明 |
+|---|---|---|
+| GET | /api/config | 获取配置 |
+| PUT | /api/config | 更新配置 |
+| POST | /api/config/test-openai | 测试连接 |
+
+## 🎤 模拟面试功能
+
+1. 上传简历并完成打分
+2. 点击「🎤 模拟面试」按钮（或从历史记录进入）
+3. 输入目标岗位描述
+4. AI 根据简历和岗位生成面试问题
+5. 逐题回答，AI 实时评估打分
+6. 查看综合评分、优缺点和参考答案
+
+### 评估维度
+- **准确性**：答案是否正确
+- **完整性**：是否覆盖关键点
+- **深度**：理解是否深入
+- **表达**：逻辑是否清晰
+
+## ⚙️ 在线配置
+
+支持在线修改以下配置：
+- OpenAI API Key
+- API Base URL（支持任意 OpenAI 兼容接口）
+- 主模型名称
+- 视觉模型名称
+- Tavily API Key
+
+### 支持的大模型厂商
+| 厂商 | Base URL | 推荐模型 |
+|------|----------|----------|
+| OpenAI | https://api.openai.com/v1 | gpt-4o-mini |
+| 小米 MiMo | https://api.xiaomimimo.com/v1 | mimo-v2.5-pro |
+| DeepSeek | https://api.deepseek.com/v1 | deepseek-chat |
+| Moonshot | https://api.moonshot.cn/v1 | moonshot-v1-8k |
+| 智谱 | https://open.bigmodel.cn/api/paas/v4 | glm-4-flash |
+| 通义千问 | https://dashscope.aliyuncs.com/compatible-mode/v1 | qwen-turbo |
+
+## 🔍 简历解析策略
+
+采用**五级兜底**解析策略：
+
+| 优先级 | 解析器 | 适用场景 |
+|--------|--------|----------|
+| 1 | LiteParse | 文本型 PDF、Office 文档 |
+| 2 | markitdown | Office 文档、HTML |
+| 3 | PyPDF2 | 简单 PDF |
+| 4 | pdfplumber | 复杂布局 PDF |
+| 5 | 视觉 LLM OCR | 扫描件、图片型 PDF |
+
+## 📁 项目结构
+
+`
 resume-agent/
-├── .env.example          # 环境变量模板
-├── README.md
 ├── backend/
-│   ├── main.py           # FastAPI 入口
-│   ├── database.py       # SQLite 连接
-│   ├── models.py         # ORM 模型
-│   ├── schemas.py        # Pydantic 模型
-│   ├── requirements.txt
+│   ├── main.py                 # FastAPI 入口
+│   ├── database.py             # 数据库连接
+│   ├── models.py               # ORM 模型
 │   ├── routers/
-│   │   ├── resumes.py    # 简历上传/列表/删除
-│   │   └── scoring.py    # 打分 + 历史
+│   │   ├── resumes.py          # 简历管理
+│   │   ├── scoring.py          # 打分功能
+│   │   ├── interview.py        # 模拟面试
+│   │   └── config.py           # 配置管理
 │   └── services/
-│       ├── resume_parser.py   # PDF/DOCX/TXT 解析
-│       ├── search_service.py  # Tavily 搜索
-│       └── llm_service.py     # OpenAI 提示词与调用
+│       ├── llm_service.py      # LLM 调用
+│       ├── resume_parser.py    # 文档解析
+│       ├── search_service.py   # 联网搜索
+│       └── interview_service.py # 面试服务
 ├── frontend/
-│   ├── package.json
-│   ├── vite.config.js    # /api 代理到 8000
-│   ├── tailwind.config.js
-│   ├── index.html
 │   └── src/
-│       ├── main.jsx
 │       ├── App.jsx
-│       ├── index.css
 │       └── components/
 │           ├── ResumeManager.jsx
 │           ├── JobInput.jsx
 │           ├── ScoreResult.jsx
-│           └── HistoryModal.jsx
-└── uploads/              # 简历文件存储（自动创建）
-```
+│           ├── HistoryModal.jsx
+│           ├── InterviewModal.jsx
+│           └── ConfigModal.jsx
+├── .env.example
+└── README.md
+`
 
-## 🚀 快速开始
+## 常见问题
 
-### 方式 1：一键启动（推荐）
+**Q: 打分超时？**
+A: LLM 服务响应较慢，已将超时时间设为 3 分钟。
 
-双击项目根目录下的 [start-all.bat](file:///d:/python/agent/test-agent/resume-agent/start-all.bat)，会自动开两个窗口分别跑后端和前端。
+**Q: 如何切换大模型？**
+A: 点击右上角「⚙️ 配置」按钮，在线修改 API Key 和模型。
 
-启动后浏览器打开 <http://localhost:5173> 即可。
+**Q: PDF 解析为空？**
+A: 可能是扫描件，系统会自动使用视觉 LLM 进行 OCR。
 
-完成后想停服务，双击 [stop-all.bat](file:///d:/python/agent/test-agent/resume-agent/stop-all.bat)。
-
-### 方式 2：手动启动
-
-**2.1 准备环境**
-- Python 3.10+
-- Node.js 18+
-- 注册并准备：
-  - **OpenAI API Key**（[platform.openai.com](https://platform.openai.com/api-keys)）或任何 OpenAI 兼容服务（DeepSeek / 小米 MiMo / 通义千问等）
-  - **Tavily API Key**（[tavily.com](https://tavily.com)，免费 1000 次/月）
-
-**2.2 配置环境变量**
-
-在项目根目录（`resume-agent/`）复制 `.env.example` 为 `.env`：
-
-```bash
-cp .env.example .env
-```
-
-编辑 `.env`，填入真实 key：
-
-```env
-OPENAI_API_KEY=sk-...
-OPENAI_BASE_URL=https://api.openai.com/v1
-OPENAI_MODEL=gpt-4o-mini
-TAVILY_API_KEY=tvly-...
-```
-
-> 💡 **小米 MiMo**：`BASE_URL=https://api.xiaomimimo.com/v1`，模型用 `mimo-v2.5-pro`（用 `GET /v1/models` 探真实可用列表）
-> 💡 **DeepSeek**：`BASE_URL=https://api.deepseek.com/v1`，`OPENAI_MODEL=deepseek-chat`
-
-**2.3 启动后端**
-
-> Windows 上 `pip` / `python` 命令常因 App Execution Aliases 失效，建议直接用 `py` 启动器或调用绝对路径。
-
-```powershell
-cd resume-agent\backend
-py -m pip install -r requirements.txt
-py -m uvicorn main:app --reload --port 8000
-```
-
-或直接双击 [start-backend.bat](file:///d:/python/agent/test-agent/resume-agent/start-backend.bat)。
-
-后端运行在 <http://localhost:8000>，可访问 <http://localhost:8000/docs> 看 Swagger 文档。
-
-**2.4 启动前端（新开一个终端）**
-
-```powershell
-cd resume-agent\frontend
-npm install
-npm run dev
-```
-
-或直接双击 [start-frontend.bat](file:///d:/python/agent/test-agent/resume-agent/start-frontend.bat)。
-
-前端运行在 <http://localhost:5173>。
-
-> 🔗 前端通过 Vite 代理（`/api → http://localhost:8000`）调用后端，无需关心跨域。
-
-## 📡 API 速览
-
-| Method | Path | 用途 |
-|---|---|---|
-| POST | `/api/resumes/upload` | 上传简历（multipart，字段 `file`） |
-| GET  | `/api/resumes` | 简历列表 |
-| DELETE | `/api/resumes/{id}` | 删除简历 |
-| POST | `/api/score` | 打分（JSON：`{resume_id, job_description}`） |
-| GET  | `/api/score/history` | 历史打分记录 |
-| GET  | `/uploads/{filename}` | 访问已上传文件 |
-
-## 🧪 完整调用流程
-
-1. 前端调 `POST /api/resumes/upload` 上传 PDF → 后端解析存库 → 返回 `resume_id`
-2. 用户在前端粘贴招聘信息 + 选中简历 → 调 `POST /api/score`
-3. 后端流程：
-   - 读取简历文本
-   - 调用 Tavily 搜索（**失败不阻塞**）
-   - 组装 Prompt：`招聘信息 + 搜索摘要 + 简历文本`
-   - 调 OpenAI（`response_format=json_object`）→ 解析 JSON
-   - 写库 `score_records`
-4. 前端把结果渲染为：总分 + 四维进度条 + 优势/不足 + 学习资源卡片
-
-## ⚠️ 常见问题
-
-**Q: 提示 `OPENAI_API_KEY 未配置`**
-A: 检查项目根目录的 `.env` 是否存在并填了真 key；修改后重启后端。
-
-**Q: 提示 `Tavily 搜索失败`**
-A: 不会影响主流程，控制台会有 warning，LLM 仅基于 JD + 简历打分。
-
-**Q: PDF 解析出来是空的**
-A: 可能是扫描件（图片型 PDF），需要先用 OCR。代码会保留文件但 `content=""`，前端可看到提示。
-
-**Q: 端口 8000 / 5173 被占用**
-A: 后端改 `uvicorn main:app --port 8001`，同时改 `frontend/vite.config.js` 的 proxy 目标端口。
-
-**Q: 想换 LLM**
-A: 修改 `.env` 的 `OPENAI_BASE_URL` 和 `OPENAI_MODEL` 即可。DeepSeek、智谱、通义、Moonshot 都兼容 OpenAI 接口。
-
-## 🔒 安全提示
-
-- `.env` 不要提交到 git
-- 当前 `CORS` 全部放行（开发期方便），生产请收敛 `allow_origins`
-- 上传文件保存在 `uploads/`，生产建议放到对象存储并加病毒扫描
-
-## 📜 License
+## License
 
 MIT
