@@ -151,6 +151,28 @@ resume-agent/
 └── README.md
 `
 
+
+## 🔧 GitHub 加速配置
+
+国内网络访问 GitHub 经常超时，可使用以下方式加速：
+
+### 快速配置（推荐）
+
+`powershell
+# 使用镜像加速脚本
+.\setup-github.ps1 -Method mirror
+`
+
+### 其他方式
+
+| 方式 | 命令 | 说明 |
+|------|------|------|
+| 镜像 | .\setup-github.ps1 -Method mirror | 使用 ghfast 等镜像站 |
+| 代理 | .\setup-github.ps1 -Method proxy | 使用本地代理 |
+| SSH | .\setup-github.ps1 -Method ssh | 配置 SSH 密钥 |
+
+详细说明见 [GITHUB_SETUP.md](./GITHUB_SETUP.md)
+
 ## 常见问题
 
 **Q: 打分超时？**
@@ -165,3 +187,4 @@ A: 可能是扫描件，系统会自动使用视觉 LLM 进行 OCR。
 ## License
 
 MIT
+
