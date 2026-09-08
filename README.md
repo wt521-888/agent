@@ -23,6 +23,43 @@
 - 📊 **历史记录**：保存所有打分记录，支持查看/删除/跳转面试
 - ⚙️ **在线配置**：在线修改 API Key 和模型配置，支持多家 LLM 服务商
 
+## 📸 项目展示
+
+### 主界面
+<p align="center">
+  <img src="screenshots/01-main-page.png" width="800" alt="主界面"/>
+</p>
+
+### 智能打分结果
+<p align="center">
+  <img src="screenshots/02-score-result.png" width="800" alt="打分结果"/>
+</p>
+
+### 模拟面试 - 开始
+<p align="center">
+  <img src="screenshots/03-interview-start.png" width="800" alt="模拟面试开始"/>
+</p>
+
+### 模拟面试 - 题目
+<p align="center">
+  <img src="screenshots/04-interview-questions.png" width="800" alt="面试题目"/>
+</p>
+
+### 一键优化简历
+<p align="center">
+  <img src="screenshots/05-resume-optimize.png" width="800" alt="简历优化"/>
+</p>
+
+### 历史记录
+<p align="center">
+  <img src="screenshots/06-history.png" width="800" alt="历史记录"/>
+</p>
+
+### 在线配置
+<p align="center">
+  <img src="screenshots/07-config.png" width="800" alt="配置管理"/>
+</p>
+
 ## 🛠️ 技术栈
 
 | 层级 | 技术 |
@@ -64,6 +101,7 @@ agent/
 │       └── search_service.py
 ├── frontend/
 │   └── src/components/
+├── screenshots/              # 项目截图
 ├── .env.example
 └── README.md
 ```
