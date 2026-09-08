@@ -92,36 +92,44 @@ npm run dev
 ## 📁 项目结构
 
 `
-├── backend/
-│   ├── main.py              # FastAPI 入口
-│   ├── database.py          # 数据库配置
-│   ├── models.py            # 数据模型
-│   ├── schemas.py           # Pydantic 验证模型
-│   ├── routers/
-│   │   ├── resumes.py       # 简历管理路由
-│   │   ├── scoring.py       # 打分路由
-│   │   ├── interview.py     # 模拟面试路由
-│   │   └── config.py        # 配置管理路由
-│   ├── services/
-│   │   ├── llm_service.py   # LLM 调用服务
-│   │   ├── resume_parser.py # 简历解析服务
-│   │   ├── interview_service.py # 面试服务
-│   │   └── search_service.py # 搜索服务
-│   └── uploads/             # 上传文件存储
-├── frontend/
+├── backend/                    # 后端服务
+│   ├── main.py                 # FastAPI 入口
+│   ├── database.py             # 数据库配置
+│   ├── models.py               # 数据模型
+│   ├── schemas.py              # Pydantic 验证模型
+│   ├── requirements.txt        # Python 依赖
+│   ├── routers/                # API 路由
+│   │   ├── resumes.py          # 简历管理
+│   │   ├── scoring.py          # 打分功能
+│   │   ├── interview.py        # 模拟面试
+│   │   ├── modify.py           # 简历修改
+│   │   └── config.py           # 配置管理
+│   ├── services/               # 业务逻辑
+│   │   ├── llm_service.py      # LLM 调用
+│   │   ├── resume_parser.py    # 简历解析
+│   │   ├── interview_service.py# 面试服务
+│   │   ├── resume_writer.py    # 简历写入
+│   │   └── search_service.py   # 搜索服务
+│   └── uploads/                # 上传文件
+├── frontend/                   # 前端应用
 │   ├── src/
-│   │   ├── App.jsx          # 主应用组件
-│   │   └── components/      # UI 组件
-│   │       ├── ResumeManager.jsx   # 简历管理
-│   │       ├── JobInput.jsx        # 岗位输入
-│   │       ├── ScoreResult.jsx     # 打分结果
-│   │       ├── HistoryModal.jsx    # 历史记录
-│   │       ├── InterviewModal.jsx  # 模拟面试
-│   │       └── ConfigModal.jsx     # 配置管理
-│   └── index.html
-├── .env.example             # 环境变量模板
-├── .env                     # 环境变量（不提交）
+│   │   ├── App.jsx             # 主应用
+│   │   └── components/         # UI 组件
+│   │       ├── ResumeManager.jsx
+│   │       ├── JobInput.jsx
+│   │       ├── ScoreResult.jsx
+│   │       ├── HistoryModal.jsx
+│   │       ├── InterviewModal.jsx
+│   │       └── ConfigModal.jsx
+│   ├── index.html
+│   ├── package.json
+│   ├── vite.config.js
+│   └── tailwind.config.js
+├── .env.example                # 环境变量模板
+├── .env                        # 环境变量（不提交）
 ├── .gitignore
+├── setup-github.ps1            # GitHub 配置脚本
+├── GITHUB_SETUP.md             # GitHub 配置说明
 └── README.md
 `
 
@@ -178,10 +186,8 @@ npm run dev
 
 MIT License
 
-<<<<<<< HEAD
-MIT
+## 示例样图
 
-##示例样图
 <img width="1063" height="656" alt="屏幕截图 2026-09-08 095743" src="https://github.com/user-attachments/assets/4d74b5ea-ff7f-4290-9bb4-dbcc452b4eb1" />
 <img width="1220" height="662" alt="屏幕截图 2026-09-08 100409" src="https://github.com/user-attachments/assets/a1e18346-e1b1-415b-ad23-b339e0a3cb33" />
 <img width="666" height="395" alt="image" src="https://github.com/user-attachments/assets/bbb75d60-2931-43ff-9f47-fcaa4ff5923b" />
@@ -190,10 +196,7 @@ MIT
 <img width="491" height="511" alt="image" src="https://github.com/user-attachments/assets/c77df578-f001-4ca6-8d2c-2c0d3cb9ec05" />
 <img width="659" height="566" alt="屏幕截图 2026-09-08 112533" src="https://github.com/user-attachments/assets/24b32744-0a3a-4d70-b2e4-3f291fcbc61e" />
 
-
-=======
 ## 🔗 链接
 
 - [GitHub 仓库](https://github.com/wt521-888/agent)
 - [问题反馈](https://github.com/wt521-888/agent/issues)
->>>>>>> master
