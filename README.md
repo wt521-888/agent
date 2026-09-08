@@ -180,5 +180,6 @@ MIT
 <img width="671" height="518" alt="image" src="https://github.com/user-attachments/assets/c6b42292-321a-4dec-a4d7-e07fc82919bb" />
 <img width="573" height="535" alt="屏幕截图 2026-09-08 102550" src="https://github.com/user-attachments/assets/eafaa444-d301-4d2c-b0de-3a397e0a737e" />
 <img width="491" height="511" alt="image" src="https://github.com/user-attachments/assets/c77df578-f001-4ca6-8d2c-2c0d3cb9ec05" />
+<img width="659" height="566" alt="屏幕截图 2026-09-08 112533" src="https://github.com/user-attachments/assets/24b32744-0a3a-4d70-b2e4-3f291fcbc61e" />
 
 
