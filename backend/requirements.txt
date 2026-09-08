@@ -9,3 +9,18 @@ python-dotenv>=1.0.1
 httpx>=0.27.0
 openai>=1.50.0
 tavily-python>=0.3.3
+fpdf2>=2.7.9
+
+# 简历解析核心依赖（按优先级排序）
+# 1. liteparse - LlamaIndex 出品，支持 OCR、多格式、结构化 Markdown 输出
+liteparse>=2.14.0
+
+# 2. markitdown - 微软开源，统一文件转 Markdown（PDF/DOCX/PPTX/XLSX/HTML/图片等）
+markitdown[all]>=0.1.7
+
+# 3. PDF 解析兜底
+pdfplumber>=0.11.0
+
+# 4. 图片型 PDF 视觉 OCR（渲染 + AI 读图）
+pymupdf>=1.24.0
+Pillow>=10.0.0

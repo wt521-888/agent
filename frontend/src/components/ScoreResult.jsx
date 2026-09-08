@@ -1,6 +1,11 @@
 /**
  * 打分结果展示
  */
+import { useState } from 'react'
+import axios from 'axios'
+
+const API = '/api'
+
 function ScoreBar({ label, value, color = 'bg-primary-500' }) {
   const pct = Math.max(0, Math.min(100, value))
   return (
@@ -67,7 +72,162 @@ function ResourceCard({ r }) {
   )
 }
 
+
+/**
+ * 一键优化简历弹窗
+ * - 展示 LLM 重写后的纯文本
+ * - 提供「下载新文件」「复制文本」「查看备份」三个动作
+ */
+function ModifyResumeModal({ open, loading, data, error, onClose, onRetry }) {
+  const [copied, setCopied] = useState(false)
+  if (!open) return null
+
+  const handleCopy = async () => {
+    if (!data?.modified_content) return
+    try {
+      await navigator.clipboard.writeText(data.modified_content)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1500)
+    } catch {
+      // 兜底：选中文本
+      const ta = document.createElement('textarea')
+      ta.value = data.modified_content
+      document.body.appendChild(ta)
+      ta.select()
+      document.execCommand('copy')
+      document.body.removeChild(ta)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1500)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <div className="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[85vh] flex flex-col">
+        <div className="flex items-center justify-between p-4 border-b">
+          <h2 className="text-lg font-semibold text-gray-800">
+            📝 一键优化简历
+            <span className="text-xs text-gray-500 font-normal ml-2">
+              原文件已备份，未被修改
+            </span>
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-700 text-2xl leading-none"
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          {loading && (
+            <div className="py-16 text-center text-gray-500">
+              <div className="inline-block animate-spin h-8 w-8 border-4 border-primary-500 border-t-transparent rounded-full mb-3" />
+              <div>正在调用 LLM 重写简历，请稍候…</div>
+            </div>
+          )}
+
+          {error && !loading && (
+            <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg text-sm">
+              {error}
+              <div className="mt-2">
+                <button
+                  onClick={onRetry}
+                  className="text-xs bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded"
+                >
+                  重试
+                </button>
+              </div>
+            </div>
+          )}
+
+          {data && !loading && !error && (
+            <>
+              {/* 应用了哪些建议 */}
+              {data.applied_improvements?.length > 0 && (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                  <div className="text-sm font-medium text-amber-800 mb-1">
+                    ✨ 已应用 {data.applied_improvements.length} 条改进建议
+                  </div>
+                  <ul className="text-xs text-amber-700 space-y-0.5 list-disc pl-5">
+                    {data.applied_improvements.map((s, i) => (
+                      <li key={i}>{s}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* 文件信息 */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-gray-600">
+                <div className="bg-gray-50 rounded p-2">
+                  <span className="text-gray-400">原文件：</span>
+                  <span className="font-mono">{data.original_filename}</span>
+                </div>
+                <div className="bg-gray-50 rounded p-2">
+                  <span className="text-gray-400">备份为：</span>
+                  <span className="font-mono">{data.backup_filename}</span>
+                </div>
+                <div className="bg-green-50 rounded p-2 md:col-span-2">
+                  <span className="text-gray-400">新文件：</span>
+                  <span className="font-mono">{data.new_filename}</span>
+                </div>
+              </div>
+
+              {/* 改写后内容 */}
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <h3 className="text-sm font-semibold text-gray-700">
+                    修改后预览
+                  </h3>
+                  <button
+                    onClick={handleCopy}
+                    className="text-xs text-primary-600 hover:text-primary-700"
+                  >
+                    {copied ? '✓ 已复制' : '📋 复制全文'}
+                  </button>
+                </div>
+                <pre className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-xs text-gray-800 whitespace-pre-wrap font-sans max-h-[45vh] overflow-y-auto">
+                  {data.modified_content}
+                </pre>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* 底部操作 */}
+        {data && !loading && !error && (
+          <div className="flex items-center justify-end gap-2 p-4 border-t bg-gray-50">
+            <a
+              href={data.new_file_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm bg-white hover:bg-gray-50 border border-gray-300 px-4 py-2 rounded-lg"
+            >
+              👁 在线查看
+            </a>
+            <a
+              href={data.new_file_url}
+              download={data.new_filename}
+              className="text-sm bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg"
+            >
+              ⬇️ 下载修改版
+            </a>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+
 export default function ScoreResult({ record }) {
+  // 修改简历弹窗相关 state
+  const [modifyOpen, setModifyOpen] = useState(false)
+  const [modifyLoading, setModifyLoading] = useState(false)
+  const [modifyData, setModifyData] = useState(null)
+  const [modifyError, setModifyError] = useState('')
+  const [modifyGlobalError, setModifyGlobalError] = useState('')
+
   if (!record) {
     return (
       <div className="bg-white rounded-xl shadow-sm p-8 text-center text-gray-400">
@@ -82,6 +242,33 @@ export default function ScoreResult({ record }) {
   const scoreColor =
     overall_score >= 75 ? 'text-green-600' :
     overall_score >= 60 ? 'text-yellow-600' : 'text-red-600'
+
+  const canModify = resume_improvements && resume_improvements.length > 0
+
+  const openModify = async () => {
+    if (!canModify) return
+    setModifyOpen(true)
+    setModifyError('')
+    setModifyData(null)
+    setModifyLoading(true)
+    try {
+      const r = await axios.post(`${API}/resumes/modify`, {
+        resume_id: record.resume_id,
+        improvements: resume_improvements,
+        score_record_id: record.id,
+      })
+      setModifyData(r.data)
+    } catch (err) {
+      const detail = err.response?.data?.detail || err.message
+      setModifyError(detail)
+    } finally {
+      setModifyLoading(false)
+    }
+  }
+
+  const closeModify = () => {
+    setModifyOpen(false)
+  }
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-5 space-y-4">
@@ -120,6 +307,30 @@ export default function ScoreResult({ record }) {
         <ListCard title="需强化的知识" emoji="📚" items={knowledge_areas} />
       </div>
 
+      {/* 一键优化简历按钮 */}
+      {canModify && (
+        <div className="bg-gradient-to-r from-primary-50 to-blue-50 border border-primary-200 rounded-lg p-3 flex items-center justify-between">
+          <div className="text-sm text-gray-700">
+            <span className="font-medium text-primary-700">💡 根据上面的「简历改进建议」</span>
+            ，让 LLM 一键重写简历（原文件自动备份，模板沿用原格式）。
+          </div>
+          <button
+            onClick={openModify}
+            disabled={modifyLoading}
+            className="text-sm bg-primary-600 hover:bg-primary-700 disabled:bg-gray-300 text-white px-4 py-2 rounded-lg shrink-0 ml-3"
+          >
+            ✨ 一键优化简历
+          </button>
+        </div>
+      )}
+
+      {/* 修改简历全局错误条 */}
+      {modifyGlobalError && (
+        <div className="bg-red-50 text-red-700 px-4 py-2 rounded text-xs">
+          {modifyGlobalError}
+        </div>
+      )}
+
       {/* 学习资源 */}
       {learning_resources && learning_resources.length > 0 && (
         <div>
@@ -143,6 +354,16 @@ export default function ScoreResult({ record }) {
           </pre>
         </details>
       )}
+
+      {/* 修改简历弹窗 */}
+      <ModifyResumeModal
+        open={modifyOpen}
+        loading={modifyLoading}
+        data={modifyData}
+        error={modifyError}
+        onClose={closeModify}
+        onRetry={openModify}
+      />
     </div>
   )
 }
