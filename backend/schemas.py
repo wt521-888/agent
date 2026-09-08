@@ -2,7 +2,7 @@
 Pydantic 数据校验模型（API 入参/出参）
 """
 from datetime import datetime
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, Field
 
 
@@ -53,6 +53,16 @@ class ScoreResult(BaseModel):
     learning_resources: List[LearningResource]
 
 
+class TokenUsage(BaseModel):
+    """Token 使用量统计"""
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
+    total_tokens: int = 0
+    estimated_cost_usd: float = 0.0
+    cache_hit: bool = False
+    regex_extracted: bool = False
+
+
 class ScoreRecordOut(BaseModel):
     id: int
     resume_id: int
@@ -65,6 +75,7 @@ class ScoreRecordOut(BaseModel):
     overall_score: int
     result: ScoreResult
     search_summary: str = ""
+    token_usage: Optional[TokenUsage] = None
     created_at: datetime
 
     class Config:

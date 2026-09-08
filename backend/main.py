@@ -7,16 +7,16 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from database import init_db
-from routers import resumes, scoring
+from backend.database import init_db
+from backend.routers import resumes, scoring, interview, config
 
 # 加载 .env
 load_dotenv()
 
 app = FastAPI(
     title="简历智能打分 Agent",
-    description="上传简历 + 招聘信息 → LLM 多维度打分 + 改进建议",
-    version="1.0.0",
+    description="上传简历 + 招聘信息 → LLM 多维度打分 + 改进建议 + 模拟面试",
+    version="2.4.0",
 )
 
 # CORS（开发期全开；生产请收敛）
@@ -39,11 +39,13 @@ app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 # 路由
 app.include_router(resumes.router, prefix="/api/resumes", tags=["resumes"])
 app.include_router(scoring.router, prefix="/api/score", tags=["scoring"])
+app.include_router(interview.router, prefix="/api/interview", tags=["interview"])
+app.include_router(config.router, prefix="/api/config", tags=["config"])
 
 
 @app.get("/")
 def root():
-    return {"message": "简历智能打分 Agent API", "version": "1.0.0"}
+    return {"message": "简历智能打分 Agent API", "version": "2.4.0"}
 
 
 @app.get("/health")
@@ -54,3 +56,4 @@ def health():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+

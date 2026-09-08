@@ -42,5 +42,6 @@ def get_db():
 
 def init_db():
     """创建所有表（首次启动时自动建表，已存在则跳过）"""
-    from models import Resume, ScoreRecord  # noqa: F401  延迟导入避免循环
+    from backend.models import Resume, ScoreRecord, ScoreCache  # noqa: F401  延迟导入避免循环
     Base.metadata.create_all(bind=engine)
+

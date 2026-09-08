@@ -1,176 +1,184 @@
-# 简历智能打分 Agent
+# 🎯 简历智能打分 Agent
 
-基于 **FastAPI + React + SQLite** 的端到端简历打分应用。集成 OpenAI LLM 与 Tavily 联网搜索，自动对候选人与岗位的匹配度进行多维度评分并给出可操作的学习建议。
+基于 **FastAPI + React + SQLite** 的端到端简历打分应用，集成 OpenAI LLM 与 Tavily 联网搜索，提供多维度评分、改进建议和模拟面试功能。
 
 ## ✨ 功能特性
 
-- 📄 **简历管理**：上传 PDF / DOCX / TXT，自动解析文本并存库
-- 🌐 **联网搜索**：调用 Tavily 自动获取公司与岗位背景
-- 🤖 **多维打分**：技能 / 经验 / 教育 / 项目 四维评分 + 总分
-- 💡 **改进建议**：优势、不足、简历改写、知识盲点、5+ 条学习资源
-- 📚 **历史记录**：所有打分记录可回溯查看
-- 🎨 **现代 UI**：React + TailwindCSS，左右分栏
+### 📄 简历管理
+- 支持 **PDF / DOCX / PPTX / XLSX / HTML / 图片** 等多格式上传
+- 智能文本解析：liteparse → markitdown → 原生解析 → OCR 兜底
+- 简历列表管理、删除、预览
 
-## 🧱 技术栈
+### 🤖 智能打分
+- **四维度评分**：技能匹配 / 工作经验 / 教育背景 / 项目经历
+- **总分计算**：综合加权评分（0-100分）
+- **改进建议**：简历优化建议、知识领域补充
+- **学习资源**：自动推荐相关学习资料（网站/视频/书籍/课程）
+- **Token 统计**：实时显示 API 调用的 Token 消耗和成本
 
-| 层 | 选型 |
-|---|---|
-| 后端 | Python 3.11 / FastAPI / SQLAlchemy 2 / SQLite |
-| 简历解析 | PyPDF2 / python-docx / 纯文本 |
-| 外部服务 | OpenAI API / Tavily Search API |
-| 前端 | React 18 / Vite 5 / TailwindCSS 3 / Axios |
+### 🌐 联网搜索
+- 集成 **Tavily Search API**，自动搜索公司和岗位信息
+- 为 LLM 提供更丰富的上下文信息
 
-## 📁 目录结构
+### 🎤 模拟面试
+- 基于简历和岗位描述 **自动生成面试问题**
+- 支持 **5-10 道题** 可配置
+- 问题分类：技术题 / 项目题 / 行为题
+- **AI 评估回答**：评分 + 优缺点分析 + 参考答案
+- 支持从历史记录直接进入面试
 
-```
-resume-agent/
-├── .env.example          # 环境变量模板
-├── README.md
-├── backend/
-│   ├── main.py           # FastAPI 入口
-│   ├── database.py       # SQLite 连接
-│   ├── models.py         # ORM 模型
-│   ├── schemas.py        # Pydantic 模型
-│   ├── requirements.txt
-│   ├── routers/
-│   │   ├── resumes.py    # 简历上传/列表/删除
-│   │   └── scoring.py    # 打分 + 历史
-│   └── services/
-│       ├── resume_parser.py   # PDF/DOCX/TXT 解析
-│       ├── search_service.py  # Tavily 搜索
-│       └── llm_service.py     # OpenAI 提示词与调用
-├── frontend/
-│   ├── package.json
-│   ├── vite.config.js    # /api 代理到 8000
-│   ├── tailwind.config.js
-│   ├── index.html
-│   └── src/
-│       ├── main.jsx
-│       ├── App.jsx
-│       ├── index.css
-│       └── components/
-│           ├── ResumeManager.jsx
-│           ├── JobInput.jsx
-│           ├── ScoreResult.jsx
-│           └── HistoryModal.jsx
-└── uploads/              # 简历文件存储（自动创建）
-```
+### 📊 历史记录
+- 保存所有打分记录
+- 支持查看详细结果、删除记录
+- 从历史记录直接跳转面试
+
+### ⚙️ 在线配置
+- **在线修改 API Key** 和模型配置
+- 支持 OpenAI / 小米 MiMo / 其他兼容服务
+- API 连接测试功能
+- 无需重启服务即可生效
+
+## 🛠️ 技术栈
+
+### 后端
+- **FastAPI** - 高性能 Python Web 框架
+- **SQLAlchemy** - ORM 数据库操作
+- **SQLite** - 轻量级数据库
+- **OpenAI SDK** - LLM 调用
+- **Tavily Search** - 联网搜索
+- **liteparse** - 简历解析（LlamaIndex）
+- **markitdown** - 微软文档转换
+- **PyMuPDF** - PDF 渲染和 OCR
+
+### 前端
+- **React 18** - UI 框架
+- **Vite** - 构建工具
+- **TailwindCSS** - 样式框架
+- **Axios** - HTTP 客户端
 
 ## 🚀 快速开始
 
-### 方式 1：一键启动（推荐）
+### 1. 克隆项目
+`ash
+git clone https://github.com/wt521-888/agent.git
+cd agent
+`
 
-双击项目根目录下的 [start-all.bat](file:///d:/python/agent/test-agent/resume-agent/start-all.bat)，会自动开两个窗口分别跑后端和前端。
-
-启动后浏览器打开 <http://localhost:5173> 即可。
-
-完成后想停服务，双击 [stop-all.bat](file:///d:/python/agent/test-agent/resume-agent/stop-all.bat)。
-
-### 方式 2：手动启动
-
-**2.1 准备环境**
-- Python 3.10+
-- Node.js 18+
-- 注册并准备：
-  - **OpenAI API Key**（[platform.openai.com](https://platform.openai.com/api-keys)）或任何 OpenAI 兼容服务（DeepSeek / 小米 MiMo / 通义千问等）
-  - **Tavily API Key**（[tavily.com](https://tavily.com)，免费 1000 次/月）
-
-**2.2 配置环境变量**
-
-在项目根目录（`resume-agent/`）复制 `.env.example` 为 `.env`：
-
-```bash
+### 2. 配置环境变量
+`ash
 cp .env.example .env
-```
+# 编辑 .env 文件，填入你的 API Key
+`
 
-编辑 `.env`，填入真实 key：
+### 3. 启动后端
+`ash
+cd backend
+pip install -r requirements.txt
+python main.py
+`
 
-```env
-OPENAI_API_KEY=sk-...
-OPENAI_BASE_URL=https://api.openai.com/v1
-OPENAI_MODEL=gpt-4o-mini
-TAVILY_API_KEY=tvly-...
-```
-
-> 💡 **小米 MiMo**：`BASE_URL=https://api.xiaomimimo.com/v1`，模型用 `mimo-v2.5-pro`（用 `GET /v1/models` 探真实可用列表）
-> 💡 **DeepSeek**：`BASE_URL=https://api.deepseek.com/v1`，`OPENAI_MODEL=deepseek-chat`
-
-**2.3 启动后端**
-
-> Windows 上 `pip` / `python` 命令常因 App Execution Aliases 失效，建议直接用 `py` 启动器或调用绝对路径。
-
-```powershell
-cd resume-agent\backend
-py -m pip install -r requirements.txt
-py -m uvicorn main:app --reload --port 8000
-```
-
-或直接双击 [start-backend.bat](file:///d:/python/agent/test-agent/resume-agent/start-backend.bat)。
-
-后端运行在 <http://localhost:8000>，可访问 <http://localhost:8000/docs> 看 Swagger 文档。
-
-**2.4 启动前端（新开一个终端）**
-
-```powershell
-cd resume-agent\frontend
+### 4. 启动前端
+`ash
+cd frontend
 npm install
 npm run dev
-```
+`
 
-或直接双击 [start-frontend.bat](file:///d:/python/agent/test-agent/resume-agent/start-frontend.bat)。
+### 5. 访问应用
+- 前端：http://localhost:5173
+- 后端 API：http://localhost:8000
+- API 文档：http://localhost:8000/docs
 
-前端运行在 <http://localhost:5173>。
+## 📁 项目结构
 
-> 🔗 前端通过 Vite 代理（`/api → http://localhost:8000`）调用后端，无需关心跨域。
+`
+├── backend/
+│   ├── main.py              # FastAPI 入口
+│   ├── database.py          # 数据库配置
+│   ├── models.py            # 数据模型
+│   ├── schemas.py           # Pydantic 验证模型
+│   ├── routers/
+│   │   ├── resumes.py       # 简历管理路由
+│   │   ├── scoring.py       # 打分路由
+│   │   ├── interview.py     # 模拟面试路由
+│   │   └── config.py        # 配置管理路由
+│   ├── services/
+│   │   ├── llm_service.py   # LLM 调用服务
+│   │   ├── resume_parser.py # 简历解析服务
+│   │   ├── interview_service.py # 面试服务
+│   │   └── search_service.py # 搜索服务
+│   └── uploads/             # 上传文件存储
+├── frontend/
+│   ├── src/
+│   │   ├── App.jsx          # 主应用组件
+│   │   └── components/      # UI 组件
+│   │       ├── ResumeManager.jsx   # 简历管理
+│   │       ├── JobInput.jsx        # 岗位输入
+│   │       ├── ScoreResult.jsx     # 打分结果
+│   │       ├── HistoryModal.jsx    # 历史记录
+│   │       ├── InterviewModal.jsx  # 模拟面试
+│   │       └── ConfigModal.jsx     # 配置管理
+│   └── index.html
+├── .env.example             # 环境变量模板
+├── .env                     # 环境变量（不提交）
+├── .gitignore
+└── README.md
+`
 
-## 📡 API 速览
+## 🔧 API 接口
 
-| Method | Path | 用途 |
-|---|---|---|
-| POST | `/api/resumes/upload` | 上传简历（multipart，字段 `file`） |
-| GET  | `/api/resumes` | 简历列表 |
-| DELETE | `/api/resumes/{id}` | 删除简历 |
-| POST | `/api/score` | 打分（JSON：`{resume_id, job_description}`） |
-| GET  | `/api/score/history` | 历史打分记录 |
-| GET  | `/uploads/{filename}` | 访问已上传文件 |
+### 简历管理
+- POST /api/resumes/upload - 上传简历
+- GET /api/resumes - 获取简历列表
+- GET /api/resumes/{id} - 获取简历详情
+- DELETE /api/resumes/{id} - 删除简历
 
-## 🧪 完整调用流程
+### 打分
+- POST /api/score - 简历打分
+- GET /api/score/history - 获取历史记录
+- DELETE /api/score/history/{id} - 删除历史记录
 
-1. 前端调 `POST /api/resumes/upload` 上传 PDF → 后端解析存库 → 返回 `resume_id`
-2. 用户在前端粘贴招聘信息 + 选中简历 → 调 `POST /api/score`
-3. 后端流程：
-   - 读取简历文本
-   - 调用 Tavily 搜索（**失败不阻塞**）
-   - 组装 Prompt：`招聘信息 + 搜索摘要 + 简历文本`
-   - 调 OpenAI（`response_format=json_object`）→ 解析 JSON
-   - 写库 `score_records`
-4. 前端把结果渲染为：总分 + 四维进度条 + 优势/不足 + 学习资源卡片
+### 模拟面试
+- POST /api/interview/questions - 生成面试问题
+- POST /api/interview/evaluate - 评估面试回答
 
-## ⚠️ 常见问题
+### 配置
+- GET /api/config - 获取当前配置
+- PUT /api/config - 更新配置
+- POST /api/config/test-openai - 测试 API 连接
 
-**Q: 提示 `OPENAI_API_KEY 未配置`**
-A: 检查项目根目录的 `.env` 是否存在并填了真 key；修改后重启后端。
+## 🔑 环境变量说明
 
-**Q: 提示 `Tavily 搜索失败`**
-A: 不会影响主流程，控制台会有 warning，LLM 仅基于 JD + 简历打分。
+| 变量名 | 说明 | 示例 |
+|--------|------|------|
+| OPENAI_API_KEY | OpenAI API Key | sk-xxx |
+| OPENAI_BASE_URL | API 基础 URL | https://api.openai.com/v1 |
+| OPENAI_MODEL | 主模型 | gpt-4o-mini |
+| VISION_MODEL | 视觉模型（OCR） | gpt-4o-mini |
+| TAVILY_API_KEY | Tavily 搜索 Key | tvly-xxx |
+| DATABASE_URL | 数据库连接 | sqlite:///./resume_agent.db |
+| UPLOAD_DIR | 上传目录 | uploads |
 
-**Q: PDF 解析出来是空的**
-A: 可能是扫描件（图片型 PDF），需要先用 OCR。代码会保留文件但 `content=""`，前端可看到提示。
+## 📝 使用流程
 
-**Q: 端口 8000 / 5173 被占用**
-A: 后端改 `uvicorn main:app --port 8001`，同时改 `frontend/vite.config.js` 的 proxy 目标端口。
+1. **上传简历**：支持多种格式，自动解析文本
+2. **输入岗位描述**：粘贴招聘 JD
+3. **开始打分**：AI 多维度评估 + 联网搜索
+4. **查看结果**：四维度评分 + 改进建议 + 学习资源
+5. **模拟面试**：基于简历和岗位生成面试题
+6. **查看历史**：所有打分记录可追溯
 
-**Q: 想换 LLM**
-A: 修改 `.env` 的 `OPENAI_BASE_URL` 和 `OPENAI_MODEL` 即可。DeepSeek、智谱、通义、Moonshot 都兼容 OpenAI 接口。
+## 🤝 支持的模型
 
-## 🔒 安全提示
+- **OpenAI**: gpt-4o, gpt-4o-mini, gpt-3.5-turbo
+- **小米 MiMo**: mimo-v2.5-pro, mimo-v2.5
+- **其他兼容服务**: DeepSeek, Claude, 等
 
-- `.env` 不要提交到 git
-- 当前 `CORS` 全部放行（开发期方便），生产请收敛 `allow_origins`
-- 上传文件保存在 `uploads/`，生产建议放到对象存储并加病毒扫描
+## 📄 License
 
-## 📜 License
+MIT License
 
+<<<<<<< HEAD
 MIT
 
 ##示例样图
@@ -183,3 +191,9 @@ MIT
 <img width="659" height="566" alt="屏幕截图 2026-09-08 112533" src="https://github.com/user-attachments/assets/24b32744-0a3a-4d70-b2e4-3f291fcbc61e" />
 
 
+=======
+## 🔗 链接
+
+- [GitHub 仓库](https://github.com/wt521-888/agent)
+- [问题反馈](https://github.com/wt521-888/agent/issues)
+>>>>>>> master

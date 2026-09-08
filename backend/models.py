@@ -4,7 +4,7 @@ SQLAlchemy ORM 模型
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, JSON
 from sqlalchemy.orm import relationship
-from database import Base
+from backend.database import Base
 
 
 class Resume(Base):
@@ -45,3 +45,18 @@ class ScoreRecord(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     resume = relationship("Resume", back_populates="scores")
+
+class ScoreCache(Base):
+    """打分缓存表：相同简历+JD组合直接返回缓存结果，节省token"""
+    __tablename__ = "score_cache"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    cache_key = Column(String(32), unique=True, nullable=False, index=True)  # md5 hash
+    resume_id = Column(Integer, nullable=False)
+    job_description = Column(Text, nullable=False)
+    result_json = Column(JSON, nullable=False)
+    search_summary = Column(Text, default="")
+    hit_count = Column(Integer, default=1)  # 命中次数统计
+    created_at = Column(DateTime, default=datetime.utcnow)
+    last_hit_at = Column(DateTime, default=datetime.utcnow)
+

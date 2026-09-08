@@ -56,7 +56,7 @@ export default function ResumeManager({ resumes, selectedId, onSelect, onChange 
           <input
             ref={fileInputRef}
             type="file"
-            accept=".pdf,.docx,.doc,.txt"
+            accept=".pdf,.docx,.doc,.txt,.pptx,.xlsx,.html,.md,.csv,.png,.jpg"
             className="hidden"
             disabled={uploading}
             onChange={handleUpload}
@@ -71,7 +71,7 @@ export default function ResumeManager({ resumes, selectedId, onSelect, onChange 
       )}
 
       <div className="text-xs text-gray-500 mb-2">
-        支持 PDF / DOCX / DOC / TXT，单个文件 ≤ 10MB
+        支持 PDF / DOCX / TXT / PPTX / XLSX / HTML / MD / CSV / 图片，单个文件 ≤ 10MB
       </div>
 
       <div className="space-y-2 max-h-[500px] overflow-y-auto">
