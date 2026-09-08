@@ -92,44 +92,47 @@ npm run dev
 ## 📁 项目结构
 
 `
-├── backend/                    # 后端服务
-│   ├── main.py                 # FastAPI 入口
-│   ├── database.py             # 数据库配置
-│   ├── models.py               # 数据模型
-│   ├── schemas.py              # Pydantic 验证模型
-│   ├── requirements.txt        # Python 依赖
-│   ├── routers/                # API 路由
-│   │   ├── resumes.py          # 简历管理
-│   │   ├── scoring.py          # 打分功能
-│   │   ├── interview.py        # 模拟面试
-│   │   ├── modify.py           # 简历修改
-│   │   └── config.py           # 配置管理
-│   ├── services/               # 业务逻辑
-│   │   ├── llm_service.py      # LLM 调用
-│   │   ├── resume_parser.py    # 简历解析
-│   │   ├── interview_service.py# 面试服务
-│   │   ├── resume_writer.py    # 简历写入
-│   │   └── search_service.py   # 搜索服务
-│   └── uploads/                # 上传文件
-├── frontend/                   # 前端应用
+agent/
+├── backend/                      # 后端服务
+│   ├── main.py                   # FastAPI 入口
+│   ├── database.py               # 数据库配置
+│   ├── models.py                 # 数据模型
+│   ├── schemas.py                # Pydantic 验证模型
+│   ├── requirements.txt          # Python 依赖
+│   ├── routers/                  # API 路由
+│   │   ├── resumes.py            # 简历管理
+│   │   ├── scoring.py            # 打分功能
+│   │   ├── interview.py          # 模拟面试
+│   │   ├── modify.py             # 简历修改
+│   │   └── config.py             # 配置管理
+│   ├── services/                 # 业务逻辑
+│   │   ├── llm_service.py        # LLM 调用
+│   │   ├── resume_parser.py      # 简历解析
+│   │   ├── interview_service.py  # 面试服务
+│   │   ├── resume_writer.py      # 简历写入
+│   │   └── search_service.py     # 搜索服务
+│   └── uploads/                  # 上传文件
+│       ├── backups/              # 备份文件
+│       └── modified/             # 修改后文件
+├── frontend/                     # 前端应用
 │   ├── src/
-│   │   ├── App.jsx             # 主应用
-│   │   └── components/         # UI 组件
-│   │       ├── ResumeManager.jsx
-│   │       ├── JobInput.jsx
-│   │       ├── ScoreResult.jsx
-│   │       ├── HistoryModal.jsx
-│   │       ├── InterviewModal.jsx
-│   │       └── ConfigModal.jsx
+│   │   ├── App.jsx               # 主应用
+│   │   └── components/           # UI 组件
+│   │       ├── ResumeManager.jsx # 简历管理
+│   │       ├── JobInput.jsx      # 岗位输入
+│   │       ├── ScoreResult.jsx   # 打分结果
+│   │       ├── HistoryModal.jsx  # 历史记录
+│   │       ├── InterviewModal.jsx# 模拟面试
+│   │       └── ConfigModal.jsx   # 配置管理
 │   ├── index.html
 │   ├── package.json
 │   ├── vite.config.js
 │   └── tailwind.config.js
-├── .env.example                # 环境变量模板
-├── .env                        # 环境变量（不提交）
+├── .env.example                  # 环境变量模板
+├── .env                          # 环境变量（不提交）
 ├── .gitignore
-├── setup-github.ps1            # GitHub 配置脚本
-├── GITHUB_SETUP.md             # GitHub 配置说明
+├── setup-github.ps1              # GitHub 配置脚本
+├── GITHUB_SETUP.md               # GitHub 配置说明
 └── README.md
 `
 
