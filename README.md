@@ -1,152 +1,184 @@
-# 简历智能打分 Agent v2.4
+# 🎯 简历智能打分 Agent
 
-基于 **FastAPI + React + SQLite** 的端到端简历打分应用。集成 OpenAI LLM 与 Tavily 联网搜索，自动对候选人与岗位的匹配度进行多维度评分并给出可操作的学习建议。
+基于 **FastAPI + React + SQLite** 的端到端简历打分应用，集成 OpenAI LLM 与 Tavily 联网搜索，提供多维度评分、改进建议和模拟面试功能。
 
 ## ✨ 功能特性
 
-- 📄 **简历管理**：上传 PDF / DOCX / TXT 等多种格式，自动解析
-- 🌐 **联网搜索**：调用 Tavily 自动获取公司与岗位背景
-- 🤖 **多维打分**：技能 / 经验 / 教育 / 项目 四维评分 + 总分
-- 💡 **改进建议**：优势、不足、简历改写、学习资源
-- ✨ **一键优化**：根据改进建议，LLM 自动重写简历
-- 🎤 **模拟面试**：AI 生成面试问题，实时评估回答并打分
-- ⚙️ **在线配置**：支持在线修改 API Key、切换大模型厂商
-- 📚 **历史记录**：所有打分记录可回溯查看
-- 💰 **智能缓存**：相同简历+JD组合自动缓存，节省 token
-- 📊 **Token统计**：实时显示每次打分的 token 消耗和预估成本
+### 📄 简历管理
+- 支持 **PDF / DOCX / PPTX / XLSX / HTML / 图片** 等多格式上传
+- 智能文本解析：liteparse → markitdown → 原生解析 → OCR 兜底
+- 简历列表管理、删除、预览
 
-## 🧱 技术栈
+### 🤖 智能打分
+- **四维度评分**：技能匹配 / 工作经验 / 教育背景 / 项目经历
+- **总分计算**：综合加权评分（0-100分）
+- **改进建议**：简历优化建议、知识领域补充
+- **学习资源**：自动推荐相关学习资料（网站/视频/书籍/课程）
+- **Token 统计**：实时显示 API 调用的 Token 消耗和成本
 
-| 层 | 选型 |
-|---|---|
-| 后端 | Python 3.13 / FastAPI / SQLAlchemy / SQLite |
-| 简历解析 | PyPDF2 / python-docx |
-| 外部服务 | OpenAI API / Tavily Search API |
-| 前端 | React 18 / Vite 5 / TailwindCSS 3 |
+### 🌐 联网搜索
+- 集成 **Tavily Search API**，自动搜索公司和岗位信息
+- 为 LLM 提供更丰富的上下文信息
+
+### 🎤 模拟面试
+- 基于简历和岗位描述 **自动生成面试问题**
+- 支持 **5-10 道题** 可配置
+- 问题分类：技术题 / 项目题 / 行为题
+- **AI 评估回答**：评分 + 优缺点分析 + 参考答案
+- 支持从历史记录直接进入面试
+
+### 📊 历史记录
+- 保存所有打分记录
+- 支持查看详细结果、删除记录
+- 从历史记录直接跳转面试
+
+### ⚙️ 在线配置
+- **在线修改 API Key** 和模型配置
+- 支持 OpenAI / 小米 MiMo / 其他兼容服务
+- API 连接测试功能
+- 无需重启服务即可生效
+
+## 🛠️ 技术栈
+
+### 后端
+- **FastAPI** - 高性能 Python Web 框架
+- **SQLAlchemy** - ORM 数据库操作
+- **SQLite** - 轻量级数据库
+- **OpenAI SDK** - LLM 调用
+- **Tavily Search** - 联网搜索
+- **liteparse** - 简历解析（LlamaIndex）
+- **markitdown** - 微软文档转换
+- **PyMuPDF** - PDF 渲染和 OCR
+
+### 前端
+- **React 18** - UI 框架
+- **Vite** - 构建工具
+- **TailwindCSS** - 样式框架
+- **Axios** - HTTP 客户端
+
+## 🚀 快速开始
+
+### 1. 克隆项目
+`ash
+git clone https://github.com/wt521-888/agent.git
+cd agent
+`
+
+### 2. 配置环境变量
+`ash
+cp .env.example .env
+# 编辑 .env 文件，填入你的 API Key
+`
+
+### 3. 启动后端
+`ash
+cd backend
+pip install -r requirements.txt
+python main.py
+`
+
+### 4. 启动前端
+`ash
+cd frontend
+npm install
+npm run dev
+`
+
+### 5. 访问应用
+- 前端：http://localhost:5173
+- 后端 API：http://localhost:8000
+- API 文档：http://localhost:8000/docs
 
 ## 📁 项目结构
 
 `
-D:\python\agent\简历打分agent\
-├── .venv/                # Python 虚拟环境
-├── backend/              # 后端代码
-│   ├── main.py           # FastAPI 入口
-│   ├── models.py         # 数据库模型
-│   ├── schemas.py        # Pydantic 模型
-│   ├── routers/          # API 路由
-│   └── services/         # 业务逻辑
-├── frontend/             # 前端代码
-├── uploads/              # 简历文件存储
-├── .env                  # 环境变量配置
-├── .env.example          # 环境变量模板
-├── resume_agent.db       # SQLite 数据库
-├── start.py              # 启动脚本
+├── backend/
+│   ├── main.py              # FastAPI 入口
+│   ├── database.py          # 数据库配置
+│   ├── models.py            # 数据模型
+│   ├── schemas.py           # Pydantic 验证模型
+│   ├── routers/
+│   │   ├── resumes.py       # 简历管理路由
+│   │   ├── scoring.py       # 打分路由
+│   │   ├── interview.py     # 模拟面试路由
+│   │   └── config.py        # 配置管理路由
+│   ├── services/
+│   │   ├── llm_service.py   # LLM 调用服务
+│   │   ├── resume_parser.py # 简历解析服务
+│   │   ├── interview_service.py # 面试服务
+│   │   └── search_service.py # 搜索服务
+│   └── uploads/             # 上传文件存储
+├── frontend/
+│   ├── src/
+│   │   ├── App.jsx          # 主应用组件
+│   │   └── components/      # UI 组件
+│   │       ├── ResumeManager.jsx   # 简历管理
+│   │       ├── JobInput.jsx        # 岗位输入
+│   │       ├── ScoreResult.jsx     # 打分结果
+│   │       ├── HistoryModal.jsx    # 历史记录
+│   │       ├── InterviewModal.jsx  # 模拟面试
+│   │       └── ConfigModal.jsx     # 配置管理
+│   └── index.html
+├── .env.example             # 环境变量模板
+├── .env                     # 环境变量（不提交）
+├── .gitignore
 └── README.md
 `
 
-## 🚀 快速开始
-
-### 1. 配置环境变量
-
-复制 .env.example 为 .env，填入 API Key。
-
-### 2. 启动服务
-
-`powershell
-# 进入项目目录
-cd D:\python\agent\简历打分agent
-
-# 启动后端
-.\.venv\Scripts\python.exe -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
-
-# 新终端，启动前端
-cd frontend
-npm run dev
-`
-
-### 3. 访问应用
-
-打开浏览器访问 http://localhost:5173
-
-## 📡 API 接口
+## 🔧 API 接口
 
 ### 简历管理
-| Method | Path | 说明 |
-|---|---|---|
-| POST | /api/resumes/upload | 上传简历 |
-| GET | /api/resumes | 简历列表 |
-| DELETE | /api/resumes/{id} | 删除简历 |
-| POST | /api/resumes/modify | 一键优化简历 |
+- POST /api/resumes/upload - 上传简历
+- GET /api/resumes - 获取简历列表
+- GET /api/resumes/{id} - 获取简历详情
+- DELETE /api/resumes/{id} - 删除简历
 
-### 打分功能
-| Method | Path | 说明 |
-|---|---|---|
-| POST | /api/score | 打分（返回 Token 统计） |
-| GET | /api/score/history | 历史记录 |
-| DELETE | /api/score/history/{id} | 删除记录 |
-| GET | /api/score/cache/stats | 查看缓存统计 |
+### 打分
+- POST /api/score - 简历打分
+- GET /api/score/history - 获取历史记录
+- DELETE /api/score/history/{id} - 删除历史记录
 
 ### 模拟面试
-| Method | Path | 说明 |
-|---|---|---|
-| POST | /api/interview/questions | 生成面试问题 |
-| POST | /api/interview/evaluate | 评估回答 |
+- POST /api/interview/questions - 生成面试问题
+- POST /api/interview/evaluate - 评估面试回答
 
-### 配置管理
-| Method | Path | 说明 |
-|---|---|---|
-| GET | /api/config | 获取配置 |
-| PUT | /api/config | 更新配置 |
-| POST | /api/config/test-openai | 测试连接 |
+### 配置
+- GET /api/config - 获取当前配置
+- PUT /api/config - 更新配置
+- POST /api/config/test-openai - 测试 API 连接
 
-## 💰 成本优化策略
+## 🔑 环境变量说明
 
-### 1. 智能缓存
-- 相同简历+JD组合自动缓存，缓存命中时零 token 消耗
+| 变量名 | 说明 | 示例 |
+|--------|------|------|
+| OPENAI_API_KEY | OpenAI API Key | sk-xxx |
+| OPENAI_BASE_URL | API 基础 URL | https://api.openai.com/v1 |
+| OPENAI_MODEL | 主模型 | gpt-4o-mini |
+| VISION_MODEL | 视觉模型（OCR） | gpt-4o-mini |
+| TAVILY_API_KEY | Tavily 搜索 Key | tvly-xxx |
+| DATABASE_URL | 数据库连接 | sqlite:///./resume_agent.db |
+| UPLOAD_DIR | 上传目录 | uploads |
 
-### 2. 正则优先提取
-- 公司名/岗位名先用正则提取，成功则零 token
+## 📝 使用流程
 
-### 3. 内容瘦身
-- 简历和 JD 自动提取关键字段，减少 50-70% 输入 token
+1. **上传简历**：支持多种格式，自动解析文本
+2. **输入岗位描述**：粘贴招聘 JD
+3. **开始打分**：AI 多维度评估 + 联网搜索
+4. **查看结果**：四维度评分 + 改进建议 + 学习资源
+5. **模拟面试**：基于简历和岗位生成面试题
+6. **查看历史**：所有打分记录可追溯
 
-### 4. 智能重试限制
-- LLM 输出异常时最多重试 2 次，避免无效消耗
+## 🤝 支持的模型
 
-## 📊 Token 消耗统计
+- **OpenAI**: gpt-4o, gpt-4o-mini, gpt-3.5-turbo
+- **小米 MiMo**: mimo-v2.5-pro, mimo-v2.5
+- **其他兼容服务**: DeepSeek, Claude, 等
 
-打分完成后会显示：
-- 输入/输出/总计 Token 数
-- 预估成本（美元）
-- 是否命中缓存
-- 是否正则提取成功
+## 📄 License
 
-## ⚙️ 支持的大模型
+MIT License
 
-| 厂商 | Base URL | 推荐模型 |
-|------|----------|----------|
-| OpenAI | https://api.openai.com/v1 | gpt-4o-mini |
-| 小米 MiMo | https://api.xiaomimimo.com/v1 | mimo-v2.5-pro |
-| DeepSeek | https://api.deepseek.com/v1 | deepseek-chat |
-| 通义千问 | https://dashscope.aliyuncs.com/compatible-mode/v1 | qwen-turbo |
+## 🔗 链接
 
-## 🔧 GitHub 加速
-
-`powershell
-.\setup-github.ps1 -Method mirror
-`
-
-## 常见问题
-
-**Q: 如何切换大模型？**
-A: 点击右上角「⚙️ 配置」按钮。
-
-**Q: 缓存什么时候命中？**
-A: 同一份简历 + 完全相同的 JD = 命中。
-
-**Q: 如何查看 Token 节省？**
-A: 打分结果页面会显示统计。
-
-## License
-
-MIT
+- [GitHub 仓库](https://github.com/wt521-888/agent)
+- [问题反馈](https://github.com/wt521-888/agent/issues)
