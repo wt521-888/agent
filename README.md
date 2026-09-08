@@ -172,3 +172,6 @@ A: 修改 `.env` 的 `OPENAI_BASE_URL` 和 `OPENAI_MODEL` 即可。DeepSeek、�
 ## 📜 License
 
 MIT
+##示例样图
+<img width="1063" height="656" alt="屏幕截图 2026-09-08 095743" src="https://github.com/user-attachments/assets/4d74b5ea-ff7f-4290-9bb4-dbcc452b4eb1" />
+
