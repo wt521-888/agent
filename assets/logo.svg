@@ -1,0 +1,27 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="200" cy="230" rx="120" ry="100" fill="url(#blueGrad)"/>
+  <ellipse cx="200" cy="160" rx="100" ry="85" fill="url(#blueGrad)"/>
+  <ellipse cx="120" cy="90" rx="35" ry="60" fill="url(#blueGrad)" transform="rotate(-20, 120, 90)"/>
+  <ellipse cx="120" cy="90" rx="20" ry="40" fill="#c4b5fd" transform="rotate(-20, 120, 90)"/>
+  <ellipse cx="280" cy="90" rx="35" ry="60" fill="url(#blueGrad)" transform="rotate(20, 280, 90)"/>
+  <ellipse cx="280" cy="90" rx="20" ry="40" fill="#c4b5fd" transform="rotate(20, 280, 90)"/>
+  <ellipse cx="160" cy="155" rx="35" ry="40" fill="white"/>
+  <ellipse cx="240" cy="155" rx="35" ry="40" fill="white"/>
+  <ellipse cx="160" cy="158" rx="18" ry="22" fill="#1e1b4b"/>
+  <ellipse cx="240" cy="158" rx="18" ry="22" fill="#1e1b4b"/>
+  <ellipse cx="155" cy="152" rx="6" ry="8" fill="white"/>
+  <ellipse cx="235" cy="152" rx="6" ry="8" fill="white"/>
+  <ellipse cx="200" cy="180" rx="12" ry="8" fill="#1e1b4b"/>
+  <path d="M175 200 Q200 220 225 200" stroke="#1e1b4b" stroke-width="3" fill="none"/>
+  <rect x="165" y="260" width="70" height="90" rx="5" fill="white"/>
+  <line x1="175" y1="280" x2="225" y2="280" stroke="#6366f1" stroke-width="2"/>
+  <line x1="175" y1="295" x2="225" y2="295" stroke="#6366f1" stroke-width="2"/>
+  <line x1="175" y1="310" x2="200" y2="310" stroke="#6366f1" stroke-width="2"/>
+  <text x="200" y="380" font-family="Arial, sans-serif" font-size="22" font-weight="bold" text-anchor="middle" fill="#4b5563">Resume Score Agent</text>
+</svg>
