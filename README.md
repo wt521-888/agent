@@ -44,24 +44,22 @@
 
 ## 🚀 快速开始
 
+**首次启动：**
 ```bash
 git clone https://github.com/wt521-888/agent.git
 cd agent
 cp .env.example .env
+pip install -r backend/requirements.txt
+cd frontend && npm install && cd ..
 ```
 
-**后端：**
-```bash
-cd backend
-pip install -r requirements.txt
-python main.py
-```
+**日常启动（每次只需）：**
+```powershell
+# 终端1 - 启动后端
+python start.py backend
 
-**前端：**
-```bash
-cd frontend
-npm install
-npm run dev
+# 终端2 - 启动前端
+python start.py frontend
 ```
 
 前端：http://localhost:5173 | 后端：http://localhost:8000
@@ -141,3 +139,4 @@ agent/
 MIT License
 
 <p align="center">Made with ❤️ by <a href="https://github.com/wt521-888">wt521-888</a></p>
+
