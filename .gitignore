@@ -33,3 +33,5 @@ Thumbs.db
 
 # Vite timestamp cache (HMR 临时文件)
 *.timestamp-*.mjs
+
+tessdata/

@@ -11,13 +11,26 @@ from typing import List, Optional
 from backend.database import get_db
 from backend.models import Resume
 from backend.schemas import ResumeBase, ResumeContent
-from backend.services.resume_parser import parse_resume
+from backend.services.resume_parser import parse_resume, get_parse_stats
 
 router = APIRouter()
 
 UPLOAD_DIR = os.getenv("UPLOAD_DIR", "uploads")
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
-ALLOWED_EXT = {"pdf", "docx", "doc", "txt"}
+
+# 支持 10+ 格式
+ALLOWED_EXT = {
+    # 文档
+    "pdf", "docx", "doc", "txt", "rtf",
+    # 演示文稿
+    "pptx", "ppt",
+    # 表格
+    "xlsx", "xls", "csv",
+    # 网页 / 标记
+    "html", "htm", "md",
+    # 图片（OCR）
+    "jpg", "jpeg", "png", "bmp", "tiff", "tif",
+}
 
 
 class ModifyResumeRequest(BaseModel):
@@ -49,7 +62,7 @@ async def upload_resume(
         raise HTTPException(400, "文件无扩展名")
     ext = file.filename.rsplit(".", 1)[-1].lower()
     if ext not in ALLOWED_EXT:
-        raise HTTPException(400, f"仅支持 {', '.join(sorted(ALLOWED_EXT))} 格式")
+        raise HTTPException(400, "仅支持 " + ", ".join(sorted(ALLOWED_EXT)) + " 格式")
 
     # 读取 + 大小校验
     contents = await file.read()
@@ -65,12 +78,11 @@ async def upload_resume(
     with open(file_path, "wb") as f:
         f.write(contents)
 
-    # 解析文本（解析失败仍保留文件，但 content 为空字符串）
+    # 解析文本（五级兜底，解析失败仍保留文件，但 content 为空字符串）
     try:
         text = parse_resume(file_path, ext)
     except Exception as e:
         text = ""
-        # 记录错误但不抛
         print(f"[resume_parser] 解析失败: {e}")
 
     # 写库
@@ -100,7 +112,6 @@ def delete_resume(resume_id: int, db: Session = Depends(get_db)):
     if not resume:
         raise HTTPException(404, "简历不存在")
 
-    # 尝试删除文件
     try:
         if resume.file_path and os.path.exists(resume.file_path):
             os.remove(resume.file_path)
@@ -112,17 +123,17 @@ def delete_resume(resume_id: int, db: Session = Depends(get_db)):
     return {"message": "删除成功", "id": resume_id}
 
 
+@router.get("/parse-stats")
+def parse_stats():
+    """获取解析引擎统计数据"""
+    return get_parse_stats()
+
+
 @router.post("/modify", response_model=ModifyResumeResponse)
 async def modify_resume(req: ModifyResumeRequest, db: Session = Depends(get_db)):
     """
     一键优化简历：根据改进建议重写简历内容
-    
-    功能：
-    1. 获取原简历内容
-    2. 调用 LLM 根据改进建议重写简历
-    3. 返回优化后的简历内容（不修改原文件）
     """
-    # 获取简历
     resume = db.query(Resume).filter(Resume.id == req.resume_id).first()
     if not resume:
         raise HTTPException(404, "简历不存在")
@@ -130,19 +141,17 @@ async def modify_resume(req: ModifyResumeRequest, db: Session = Depends(get_db))
         raise HTTPException(400, "简历内容为空，无法优化")
 
     try:
-        # 调用 LLM 优化简历
         from backend.services.llm_service import optimize_resume
         result = optimize_resume(
             resume_content=resume.content,
             improvements=req.improvements
         )
-        
         return ModifyResumeResponse(
             resume_id=resume.id,
             original_filename=resume.filename,
             modified_content=result.get("modified_content", ""),
             applied_improvements=result.get("applied_improvements", req.improvements),
-            download_url=None  # 暂不支持下载，返回纯文本
+            download_url=None,
         )
     except Exception as e:
         raise HTTPException(500, f"简历优化失败: {e}")
